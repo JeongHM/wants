@@ -11,6 +11,9 @@ RESPONSE_CODE = {
     "ALREADY_EXIST": {
         "message": "깂이 이미 존재합니다. 파라미터 값을 다른값으로 변경해주세요."
     },
+    "ALREADY_NOT_EXIST": {
+        "message": "깂이 이미 존재하지 않습니다. 파라미터 값을 다른값으로 변경해주세요."
+    },
     "EMPTY": {
         "message": "값이 존재하지 않습니다. 값을 확인해주세요."
     }
