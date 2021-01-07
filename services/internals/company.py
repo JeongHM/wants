@@ -4,6 +4,7 @@ from flask import current_app
 from models import db
 from models.companies import Companies
 from validators.company import CompanyPostSchema, CompanyDeleteSchema
+from utils.common import tag_converter
 
 
 class CompanyInternalService(object):
@@ -17,30 +18,6 @@ class CompanyInternalService(object):
 
     def __repr__(self):
         return f"self._param : {self._param} self._body : {self._body}"
-
-    def tag_converter(self, tag: str) -> (bool, dict):
-        """
-        tag name convert all language tag name -> tag_converter(text=tag_name)
-        :param tag: tag_name (태그, タグ, tag)
-        :return: list
-        """
-        try:
-            tags = {
-                "ko": "태그",
-                "ja": "タグ",
-                "en": "tag"
-            }
-            tag_name, tag_number = tag.split("_")
-
-            if tag_name not in tags.values():
-                raise ValueError("Text not in tags.values()")
-
-            result = {country: name + "_" + tag_number for country, name in tags.items()}
-
-        except Exception as e:
-            return False, e
-
-        return True, result
 
     def validate_param(self) -> (bool, bool):
         """
@@ -120,7 +97,7 @@ class CompanyInternalService(object):
             if result is True and code is True:
                 return None, "ALREADY_EXIST"
 
-            result, tags = self.tag_converter(tag=company_tag)
+            result, tags = tag_converter(tag=company_tag)
 
             if not result:
                 raise ValueError(tags)
@@ -172,7 +149,7 @@ class CompanyInternalService(object):
             if result is False and code is True:
                 return None, "ALREADY_NOT_EXIST"
 
-            result, tags = self.tag_converter(tag=company_tag)
+            result, tags = tag_converter(tag=company_tag)
 
             if not result:
                 raise ValueError(tags)

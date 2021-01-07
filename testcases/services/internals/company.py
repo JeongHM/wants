@@ -1,6 +1,6 @@
 import unittest
 
-from services.internals.company import CompanyInternalService
+from utils.common import tag_converter
 
 
 class CompanyInternalServiceTest(unittest.TestCase):
@@ -32,9 +32,8 @@ class CompanyInternalServiceTest(unittest.TestCase):
             "株式会社ZMP": ["태그_28", "タグ_28", "tag_28"]
         }
         for valid_body in self._valid_bodies:
-            company_service = CompanyInternalService(body=valid_body)
             company_tag = valid_body.get("company_tag")
-            result, tags = company_service.tag_converter(tag=company_tag)
+            result, tags = tag_converter(tag=company_tag)
 
             self.assertEqual(True, result)
             self.assertEqual(sorted(_tags.get(valid_body.get("company_name"))), sorted(tags.values()))
