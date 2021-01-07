@@ -10,10 +10,10 @@ company_blueprint = Blueprint(name="company", import_name=__name__)
 @company_blueprint.route(rule="/tags", methods=["POST", "DELETE"], endpoint="company_tags")
 @formatting_response
 def company_tags():
-    body = request.get_json()
 
     # POST method Logic
     if request.method == "POST":
+        body = request.get_json()
         company_service = CompanyInternalService(body=body)
 
         validate, message = company_service.validate_body()
@@ -32,5 +32,18 @@ def company_tags():
         return RESPONSE_CODE[message], None, 200
 
     # DELETE method Logic
+    params = dict(request.args) if request.args else None
 
-    return RESPONSE_CODE["SUCCESS"], None, 200
+    company_service = CompanyInternalService(param=params)
+
+    validate, message = company_service.validate_param()
+
+    if not validate:
+        return RESPONSE_CODE["VALIDATE_FAIL"], message, 400  # Bad Request
+
+    result, message = company_service.delete_company_tags()
+
+    if result is None:
+        return RESPONSE_CODE[message], {}, 204  # EMPTY
+
+    return RESPONSE_CODE[message], None, 200

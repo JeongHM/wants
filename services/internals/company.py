@@ -42,9 +42,25 @@ class CompanyInternalService(object):
 
         return True, result
 
+    def validate_param(self) -> (bool, bool):
+        """
+        Validate [DELETE] /company/tags query string value
+        :return: boolean
+        """
+        try:
+            error = CompanyDeleteSchema().validate(data=self._param)
+            if error:
+                raise ValueError(error)
+
+        except ValueError as e:
+            current_app.logger.error(e)
+            return False, e
+
+        return True, True
+
     def validate_body(self) -> (bool, bool):
         """
-        Validate [POST, DELETE] /company/tags body value
+        Validate [POST] /company/tags body value
         :return: boolean
         """
         try:
@@ -134,6 +150,7 @@ class CompanyInternalService(object):
             return False, "BAD_REQUEST"
 
         session.commit()
+        session.close()
         return True, "SUCCESS"
 
     def delete_company_tags(self) -> (bool or None, str):
@@ -141,11 +158,48 @@ class CompanyInternalService(object):
         delete company tags
         :return: bool, String
         """
+        session = db.session()
 
         try:
-            pass
+            company_name = self._param.get("company_name")
+            company_tag = self._param.get("company_tag")
+
+            result, code = self.has_company_tags(company_name=company_name, company_tag=company_tag)
+
+            if result is None:
+                return None, "EMPTY"
+
+            if result is False and code is True:
+                return None, "ALREADY_NOT_EXIST"
+
+            result, tags = self.tag_converter(tag=company_tag)
+
+            if not result:
+                raise ValueError(tags)
+
+            row = session.query(Companies).filter((Companies.company_ko == company_name) |
+                                                  (Companies.company_en == company_name) |
+                                                  (Companies.company_ja == company_name)).first()
+
+            tag_ko = "|".join(sorted(set(row.tag_ko.split("|")) - {tags["ko"]})) if row.tag_ko else tags["ko"]
+            tag_ja = "|".join(sorted(set(row.tag_ja.split("|")) - {tags["ja"]})) if row.tag_ja else tags["ja"]
+            tag_en = "|".join(sorted(set(row.tag_en.split("|")) - {tags["en"]})) if row.tag_en else tags["en"]
+
+            # update row
+            session.query(Companies).filter((Companies.company_ko == company_name) |
+                                            (Companies.company_en == company_name) |
+                                            (Companies.company_ja == company_name)) \
+                .update({
+                    "tag_ko": tag_ko,
+                    "tag_ja": tag_ja,
+                    "tag_en": tag_en
+            })
+
         except Exception as e:
             current_app.logger.error(e)
+            session.rollback()
             return False, "BAD_REQUEST"
 
+        session.commit()
+        session.close()
         return True, "SUCCESS"
