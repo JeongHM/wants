@@ -9,7 +9,6 @@ from utils.response_codes import RESPONSE_CODE
 
 
 def create_app():
-
     # Setting Flask App
     app = Flask(import_name=__name__)
 
@@ -42,7 +41,10 @@ def create_app():
 
     # Setting Blueprint (Controller)
     from controllers.company import company_blueprint
+    from controllers.search import search_blueprint
+
     app.register_blueprint(blueprint=company_blueprint, url_prefix="/company")
+    app.register_blueprint(blueprint=search_blueprint, url_prefix="/search")
 
     # Protect Package Conflict
     # Setting SqlAlchemy ORM
