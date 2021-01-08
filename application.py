@@ -9,7 +9,6 @@ from utils.decorators import formatting_response
 from utils.response_codes import RESPONSE_CODE
 
 
-
 def create_app():
     # Setting Flask App
     app = Flask(import_name=__name__)
@@ -62,6 +61,16 @@ def create_app():
 
 
 application = create_app()
+
+
+@application.before_request
+def before_request():
+    method = request.method
+    url = request.url
+    params = request.args if request.args else None
+    body = request.json if request.json else None
+
+    current_app.logger.info(f'[{method}] {url} params: {params} body: {body}')
 
 
 @application.route(rule="/", methods=["GET"], endpoint="health_check")
