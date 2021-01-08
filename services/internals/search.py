@@ -1,3 +1,5 @@
+from sqlalchemy import or_
+
 from flask import current_app
 from models.companies import Companies
 from utils.common import tag_converter
@@ -12,7 +14,7 @@ class SearchInternalService(object):
 
     def get_companies_by_tag(self):
         """
-        get company list which include self._tag
+        get company list which include self._company_tag
         :return:
         """
         try:
@@ -23,7 +25,9 @@ class SearchInternalService(object):
             if not result:
                 raise ValueError(tags)
 
-            rows = Companies.query.filter((Companies.tag_ko == tags["ko"])).all()
+            rows = Companies.query.filter(Companies.tag_ko.like(f"%{tags['ko']}%")).all()
+
+            rows = [row for row in rows if tags["ko"] in row.tag_ko.split("|")]
 
             for row in rows:
                 if row.company_ko:
@@ -40,5 +44,5 @@ class SearchInternalService(object):
             current_app.logger.error(e)
             return False, "BAD_REQUEST"
 
-        return True, {"companies": companies}
+        return True, {"companies": companies, "total_count": len(companies)}
 
