@@ -23,6 +23,7 @@ def init_database():
             reader = list(csv.reader(f))
             header = reader[0]
 
+            cur.execute(query="TRUNCATE TABLE companies")
             for row in reader[1:]:
                 cur.execute(query=f"""INSERT INTO companies ({', '.join(header)}) VALUES ({str(row).replace('[', '').replace(']', '').replace("''", "NULL")});""")
 
