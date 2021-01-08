@@ -42,9 +42,11 @@ def create_app():
     # Setting Blueprint (Controller)
     from controllers.company import company_blueprint
     from controllers.search import search_blueprint
+    from controllers.auto_complete import auto_complete_blueprint
 
     app.register_blueprint(blueprint=company_blueprint, url_prefix="/company")
     app.register_blueprint(blueprint=search_blueprint, url_prefix="/search")
+    app.register_blueprint(blueprint=auto_complete_blueprint, url_prefix="/auto-complete")
 
     # Protect Package Conflict
     # Setting SqlAlchemy ORM
