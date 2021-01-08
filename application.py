@@ -4,8 +4,10 @@ import logging
 from flask import Flask, current_app, request
 from flask_cors import CORS
 from logging.handlers import RotatingFileHandler
+from utils.scripts import init_database
 from utils.decorators import formatting_response
 from utils.response_codes import RESPONSE_CODE
+
 
 
 def create_app():
@@ -54,6 +56,7 @@ def create_app():
         from models import db
         db.init_app(app=app)
         db.create_all()
+        init_database()
 
     return app
 
