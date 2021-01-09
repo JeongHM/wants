@@ -1,0 +1,252 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Wants Project",
+    "version": "0.0.1",
+    "description": "<pre> Wants Project <br> 1.회사명 자동완성 회사명의 일부만 들어가도 검색이 되어야 합니다. <br> 2.태그명으로 회사 검색 <br>    태그로 검색 관련된 회사가 검색되어야 합니다. <br>    다국어로 검색이 가능해야 합니다. <br>        일본어 태그로 검색을 해도 한국 회사가 노출이 되어야 합니다. <br>        タグ_4로 검색 했을 때, wanted 회사 정보가 노출이 되어야 합니다. <br>    동일한 회사는 한번만 노출이 되어야합니다. <br> 3. 회사 태그 정보 추가 <br> 4. 회사 태그 정보 삭제</pre>"
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{domain}",
+      "variables": {
+        "protocol": {
+          "enum": [
+            "http",
+            "https"
+          ],
+          "default": "http"
+        },
+        "domain": {
+          "enum": [
+            "127.0.0.1:5000"
+          ],
+          "default": "127.0.0.1:5000"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "autocomplete",
+      "description": "자동완성"
+    },
+    {
+      "name": "search",
+      "description": "검색"
+    },
+    {
+      "name": "company",
+      "description": "회사정보"
+    }
+  ],
+  "paths": {
+    "/auto-complete": {
+      "get": {
+        "tags": [
+          "autocomplete"
+        ],
+        "summary": "자동완성",
+        "description": "회사명 자동완성 API <br>",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/company_name_param"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/200"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Empty"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "태그 정보 검색",
+        "description": "태그 정보 검색 API (한, 일, 영) 모두 가능합니다.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/company_tag_param"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/200"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Empty"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/company/tags": {
+      "post": {
+        "tags": [
+          "company"
+        ],
+        "summary": "회사 태그정보 추가",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/company_name_tags"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/200"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "company"
+        ],
+        "summary": "회사 태그정보 삭제",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/company_name_param"
+          },
+          {
+            "$ref": "#/components/parameters/company_tag_param"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/200"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "200": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object"
+          }
+        }
+      },
+      "400": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object"
+          }
+        }
+      },
+      "company_name_tags": {
+        "type": "object",
+        "properties": {
+          "company_name": {
+            "type": "string"
+          },
+          "company_tag": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "company_name_param": {
+        "in": "query",
+        "name": "company_name",
+        "schema": {
+          "type": "string",
+          "example": "원티드랩"
+        }
+      },
+      "company_tag_param": {
+        "in": "query",
+        "name": "company_tag",
+        "schema": {
+          "type": "string",
+          "example": "태그_1"
+        }
+      }
+    }
+  }
+}
