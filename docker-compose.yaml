@@ -1,0 +1,37 @@
+version: "3"
+services:
+  mysql:
+    container_name: wants_database
+    image: library/mysql:5.7
+    restart: "always"
+    volumes:
+      - mysql_volumes:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+
+  application:
+      container_name: wants_application
+      restart: "always"
+      build:
+        context: .
+        dockerfile: Dockerfile
+      volumes:
+        - ./:/home
+      links:
+        - mysql
+      ports:
+        - "5000:5000"
+      environment:
+        - DB_HOST=${DB_HOST}
+        - DB_USER=${MYSQL_USER}
+        - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - DB_DATABASE=${MYSQL_DATABASE}
+
+volumes:
+  mysql_volumes:
+    driver: local
