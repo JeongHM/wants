@@ -26,11 +26,13 @@ services:
         - mysql
       ports:
         - "5000:5000"
+        - "3000:3000"
       environment:
         - DB_HOST=${DB_HOST}
         - DB_USER=${MYSQL_USER}
         - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
         - DB_DATABASE=${MYSQL_DATABASE}
+      command : bash -c "sleep 15 | python3 application.py"
 
 volumes:
   mysql_volumes:
