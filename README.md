@@ -1,9 +1,10 @@
 ### Technology Stack
 Component         | Technology
 ---               | ---
-Backend           | Python 3.7 / Flask
+Backend           | Python 3.7 (Flask)
 Database          | Mysql
-API Documentation | Swagger-UI
+API Documentation | Swagger-UI (Node.js)
+Proxy             | Nginx
 Container         | Docker-compose
 
 ### File Structure
@@ -22,13 +23,17 @@ Container         | Docker-compose
 │   └── API 내 공통으로 사용 관련 파일
 ├── validator
 │   └── API body, request 검증 로직
+├── Dockerfiles
+│   └── Dockerfile 파일
+├── nginx
+│   └── nginx config 파일
 │
 ├── .env # 환경변수
 ├── .gitignore
+├── 00_start.sh # 프로젝트 실행 쉘 스크립트
+├── 01_stop.sh # 프로젝트 중지 쉘 스크립트
 ├── application.py
 ├── docker-compose.yaml
-├── Dockerfile
-├── requirements.txt
 ├── README.md
 └── requirements.txt
 
@@ -36,43 +41,32 @@ Container         | Docker-compose
 
 
 ### How to Start
-1. Clone repository
-    - git 원격 저장소 가져오기
+1. Clone Repository
+    - git 원격 저장소 가져옵니다.
     ```shell script
     git clone https://github.com/JeongHM/wants.git
     ```
    
-2. Set .env
-    - docker-compose.yaml 에서 `.env` 의 값을 참조하므로 아래와 같이 셋팅해주셔야 합니다. 
+2. Start Project
+    - shell 을 사용하여 프로젝트를 실행합니다.  
     ```shell script
-    # ~ <your_path>/wants
-    
-    $ nano (or vim) .env
-    
-   # ~ ~ <your_path>/wants/.env
-    DB_HOST=wants_database
-    MYSQL_USER=root
-    MYSQL_DATABASE=Wants
-    MYSQL_ROOT_PASSWORD=Q&<f-xTQg4Z}y_6V
+    $ sh ./00_start.sh
+    # 1. .env 파일을 생성합니다.
+    # 2. 프로젝트에서 사용할 포트를 확인합니다.
+    # 3. 도커 컴포즈를 실행합니다.
     ```
    
-3. Start docker-compose
-    - docker-compose 실행
-    ```shell script
-    docker-compose up -d    
-    ```
-
-4. If you get same local database volume name
-    - docker-compose 의 mysql 볼륨은 local로 저장하고있으므로 만약 사용하는 볼륨의 값이랑 같은 경우 삭제해주시고 다시 실행 해주어야 합니다.
-    ```shell script
-    docker volumn rm wants_database
-    ```
-5. Start Swagger
-    - swagger (API Docs) 를 실행시켜주시면 보다 편하게 볼 수 있습니다
-    ```shell script   
-    $ docker exec -it wants_application /bin/bash
-    $ npm install swagger/ # npm 라이브러리 설치
-    $ node swagger/index.js # 스웨거 실행
+   1. 프로젝트가 정상 실행되지 않는 경우
+        1. 프로젝트에서 사용할 포트가 겹치는 경우 -> 해당 포트를 사용하고있는 어플리케이션을 중지 시켜주셔야됩니다.
+        2. 도커 볼륨의 이름이 같은 경우 
+           ```shell script
+           docker volume rm wants_mysql_volumes
+           ```
+        
    
-    http://127.0.0.1:3000/docs # 접속
-    ```
+3.  Application List
+    - 실행되는 컨테이너 확인
+    1. API : http://127.0.0.1/api/auto-complete?company_name=wan
+    2. Swagger : http://127.0.0.1/swagger/
+    
+    
