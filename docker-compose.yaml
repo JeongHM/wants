@@ -40,8 +40,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfiles/swagger.Dockerfile
-    volumes:
-      - ./swagger:/home
     ports:
       - "3000:3000"
     links:
