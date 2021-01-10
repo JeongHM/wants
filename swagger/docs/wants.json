@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "{protocol}://{domain}",
+      "url": "{protocol}://{domain}/{application}",
       "variables": {
         "protocol": {
           "enum": [
@@ -18,9 +18,15 @@
         },
         "domain": {
           "enum": [
-            "127.0.0.1:5000"
+            "127.0.0.1"
           ],
-          "default": "127.0.0.1:5000"
+          "default": "127.0.0.1"
+        },
+        "application": {
+          "enum": [
+            "api"
+          ],
+          "default": "api"
         }
       }
     }
