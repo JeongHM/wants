@@ -7,11 +7,11 @@ echo "[.env file] \n$(cat .env)"
 
 echo "\nVerify that the port used by Docker is in use. [도커에서 사용중인 포트를 확인합니다] \n"
 
-PORTS=$(lsof -iTCP -sTCP:LISTEN -n -P | grep -w '3306\|5000\|3000\|80')
+PORTS=$( lsof -i TCP -s TCP:LISTEN -n -P |  grep -w ':80\|:3000\|:3306\|:5000')
 
 if [ -n "$PORTS" ]; then
   echo "Please stop the running port. [실핼중인 포트를 중지해야합니다]"
-  lsof -iTCP -sTCP:LISTEN -n -P | grep -w '3306\|5000\|3000\|80'
+   lsof -i TCP -s TCP:LISTEN -n -P |  grep -w ':80\|:3000\|:3306\|:5000'
 else
   DOCKERS=$(docker ps -a | grep "wants_database\|wants_application\|wants_swagger")
 
